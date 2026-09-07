@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orientador TFG · FIC-Udelar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --paper:#F3F1EA; --ink:#14142B; --inkSoft:#3C3C52;
+  --gold:#E0A200; --blue:#2563EB; --line:#E4E0D4;
+  --card:#FFFFFF; --violet:#5B3FA8;
+  --hero-bg:#14142B; --hero-fg:#F3F1EA; --hero-soft:#C9C6E0;
+  --disclaimer-bg:#fbf4e0; --disclaimer-fg:#5a4a20;
+  --aviso-bg:#fff4e5; --aviso-fg:#6b4a12; --aviso-border:#f3d9ac;
+  --err-bg:#fdecec; --err-fg:#7a2020; --err-border:#f4c2c2;
+  --tension-bg:#f3eefc; --tension-border:#e2d6f7;
+  --fbox-bg:#f7f9ff; --fbox-border:#dbe4fb; --fbox-fg:#1f3a8a;
+  --tag-bg:#eef1fb; --tag-fg:#2563EB;
+  --odd-row:#faf8f1;
+  --warn:#b23b36; --warn-border:#d9534f;
+  --loading-txt:#3C3C52;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#10101c; --ink:#E4E2F4; --inkSoft:#8080a8;
+  --gold:#F0B828; --blue:#60A5FA; --line:#252540;
+  --card:#18182e; --violet:#9B7FE8;
+  --hero-bg:#06060f; --hero-fg:#E4E2F4; --hero-soft:#7070a0;
+  --disclaimer-bg:#1c1a06; --disclaimer-fg:#c8b040;
+  --aviso-bg:#1c1a08; --aviso-fg:#c8b030; --aviso-border:#504010;
+  --err-bg:#180606; --err-fg:#f09090; --err-border:#501010;
+  --tension-bg:#140a24; --tension-border:#38245c;
+  --fbox-bg:#0c1020; --fbox-border:#1a2448; --fbox-fg:#7898f4;
+  --tag-bg:#12163a; --tag-fg:#60A5FA;
+  --odd-row:#141420;
+  --warn:#f09090; --warn-border:#c06060;
+  --loading-txt:#8080a8;
+}}
+:root[data-theme="dark"]{
+  --paper:#10101c; --ink:#E4E2F4; --inkSoft:#8080a8;
+  --gold:#F0B828; --blue:#60A5FA; --line:#252540;
+  --card:#18182e; --violet:#9B7FE8;
+  --hero-bg:#06060f; --hero-fg:#E4E2F4; --hero-soft:#7070a0;
+  --disclaimer-bg:#1c1a06; --disclaimer-fg:#c8b040;
+  --aviso-bg:#1c1a08; --aviso-fg:#c8b030; --aviso-border:#504010;
+  --err-bg:#180606; --err-fg:#f09090; --err-border:#501010;
+  --tension-bg:#140a24; --tension-border:#38245c;
+  --fbox-bg:#0c1020; --fbox-border:#1a2448; --fbox-fg:#7898f4;
+  --tag-bg:#12163a; --tag-fg:#60A5FA;
+  --odd-row:#141420;
+  --warn:#f09090; --warn-border:#c06060;
+  --loading-txt:#8080a8;
+}
+*{box-sizing:border-box;}
+body{background:var(--paper);color:var(--ink);margin:0;}
+.app{font-family:'Inter',system-ui,sans-serif;min-height:100vh;padding:40px 20px 72px;line-height:1.55;}
+.wrap{max-width:760px;margin:0 auto;}
+.kicker{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--inkSoft);}
+.hero{background:var(--hero-bg);color:var(--hero-fg);border-radius:18px;padding:34px 32px 30px;margin-top:10px;}
+.hero h1{font-family:'Anton',sans-serif;font-weight:400;margin:0;font-size:clamp(30px,6vw,50px);line-height:.98;letter-spacing:.01em;text-transform:uppercase;text-wrap:balance;}
+.hero h1 .soft{color:var(--hero-soft);display:block;}
+.rule{height:3px;width:46px;background:var(--gold);border-radius:3px;margin:20px 0 16px;}
+.formula{font-size:15px;color:var(--hero-soft);max-width:60ch;}
+.formula b{color:var(--gold);font-weight:600;}
+.blank{color:var(--hero-fg);border-bottom:2px solid var(--gold);padding:0 3px;}
+.ask{margin-top:30px;}
+.ask label{display:block;font-weight:600;font-size:15px;margin-bottom:8px;}
+.hint{color:var(--inkSoft);font-size:13px;margin:0 0 12px;}
+textarea{width:100%;min-height:118px;resize:vertical;border:1.5px solid var(--line);border-radius:12px;padding:14px 15px;font:inherit;color:var(--ink);background:var(--card);outline:none;}
+textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.14);}
+.row{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap;align-items:center;}
+.row input{flex:1 1 170px;border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;font:inherit;color:var(--ink);background:var(--card);outline:none;}
+.row input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.14);}
+.row input.bad{border-color:var(--warn-border);box-shadow:0 0 0 3px rgba(217,83,79,.14);}
+.fieldwarn{margin:2px 0 0;font-size:12.5px;color:var(--warn);}
+button.cta{background:var(--ink);color:var(--paper);border:0;border-radius:10px;padding:13px 22px;font:inherit;font-weight:600;cursor:pointer;transition:background .15s;}
+button.cta:hover:not(:disabled){opacity:.85;}
+button.cta:disabled{opacity:.45;cursor:not-allowed;}
+.mailnote{font-size:12px;color:var(--inkSoft);margin-top:8px;}
+.disclaimer{margin-top:18px;border-left:3px solid var(--gold);background:var(--disclaimer-bg);padding:12px 15px;border-radius:0 8px 8px 0;font-size:13px;color:var(--disclaimer-fg);}
+.legal{margin-top:12px;font-size:12px;color:var(--inkSoft);}
+.legal summary{cursor:pointer;font-weight:600;list-style:revert;}
+.legal summary:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:3px;}
+.legal p{margin:8px 0 0;line-height:1.55;}
+.results{margin-top:40px;}
+.secLabel{font-family:'Anton',sans-serif;text-transform:uppercase;letter-spacing:.02em;font-size:22px;margin:0 0 4px;}
+.lectura{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;}
+.lectura .tag{display:inline-block;font-size:12px;font-weight:600;background:var(--tag-bg);color:var(--tag-fg);border-radius:999px;padding:3px 10px;margin:2px 6px 2px 0;}
+.lectura .dim{font-size:13px;color:var(--inkSoft);margin-top:8px;}
+.authcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-top:14px;}
+.authcard h3{margin:0 0 6px;font-size:18px;}
+.authcard .lab{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--inkSoft);}
+.authcard p{margin:3px 0 12px;font-size:14.5px;}
+.authcard .formulabox{background:var(--fbox-bg);border:1px solid var(--fbox-border);border-radius:9px;padding:11px 13px;font-size:14px;color:var(--fbox-fg);}
+.tension{background:var(--tension-bg);border:1px solid var(--tension-border);border-radius:12px;padding:15px 18px;margin-top:16px;}
+.tension .lab{color:var(--violet);}
+.tfgcard{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px 17px;margin-top:12px;}
+.tfgcard .body{flex:1;}
+.tfgcard h4{margin:0 0 4px;font-size:15.5px;line-height:1.35;}
+.tfgcard .meta{font-size:12.5px;color:var(--inkSoft);margin:0 0 6px;}
+.tfgcard .porque{font-size:14px;margin:0 0 10px;}
+.tfgcard a{display:inline-block;font-size:13px;font-weight:600;color:var(--blue);text-decoration:none;border:1.5px solid var(--blue);border-radius:8px;padding:6px 12px;}
+.tfgcard a:hover{background:var(--blue);color:#fff;}
+.cpflag{font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.06em;}
+.aviso{background:var(--aviso-bg);border:1px solid var(--aviso-border);border-radius:10px;padding:12px 15px;font-size:14px;color:var(--aviso-fg);margin-top:6px;}
+.errbox{background:var(--err-bg);border:1px solid var(--err-border);border-radius:10px;padding:14px 16px;font-size:14px;color:var(--err-fg);margin-top:16px;}
+.loading{display:flex;align-items:center;gap:10px;color:var(--loading-txt);font-size:14px;margin-top:20px;}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--gold);animation:bounce 1s infinite ease-in-out;}
+.dot:nth-child(2){animation-delay:.15s;}
+.dot:nth-child(3){animation-delay:.3s;}
+@keyframes bounce{0%,100%{opacity:.25;transform:translateY(0);}50%{opacity:1;transform:translateY(-3px);}}
+@media(prefers-reduced-motion:reduce){.dot{animation:none;}}
+.modes{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+.mode{background:var(--card);border:1.5px solid var(--line);color:var(--inkSoft);border-radius:999px;padding:8px 16px;font:inherit;font-weight:600;font-size:13.5px;cursor:pointer;}
+.mode:hover{border-color:var(--blue);}
+.mode.on{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+.matrixIn{margin-top:2px;}
+.mrow{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;}
+.mnum{flex:0 0 26px;height:26px;margin-top:8px;border-radius:7px;background:var(--gold);color:var(--ink);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;}
+.mfields{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0;}
+.mfields input,.mrow2 input{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px 13px;font:inherit;background:var(--card);outline:none;color:var(--ink);}
+.mfields>input:focus,.mrow2 input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.14);}
+.mrow2{display:flex;gap:8px;}
+.mrow2 input{font-size:13.5px;}
+.mdel{flex:0 0 auto;margin-top:6px;background:none;border:1.5px solid var(--line);color:var(--inkSoft);width:30px;height:30px;border-radius:8px;font-size:18px;line-height:1;cursor:pointer;}
+.mdel:hover{border-color:#c96;color:#a33;}
+.madd{background:none;border:1.5px dashed var(--line);color:var(--blue);border-radius:10px;padding:9px 14px;font:inherit;font-weight:600;font-size:13.5px;cursor:pointer;}
+.madd:hover{border-color:var(--blue);}
+.matrixWrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;}
+.mtable{border-collapse:collapse;width:100%;min-width:680px;font-size:13px;}
+.mtable th{background:var(--ink);color:var(--paper);text-align:left;padding:10px 12px;font-weight:600;font-size:12px;white-space:nowrap;}
+.mtable td{padding:11px 12px;border-top:1px solid var(--line);vertical-align:top;}
+.mtable tbody tr:nth-child(even){background:var(--odd-row);}
+.mtable td.hl{color:var(--violet);font-weight:600;}
+.mtable td.hlb{font-weight:600;}
+@media(max-width:560px){.mrow2{flex-direction:column;}}
+.foot{margin-top:40px;font-size:12px;color:var(--inkSoft);text-align:center;}
+</style>
+</head>
+<body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+
+<div id="root"></div>
+
+<script type="text/babel">
+// ─── CONFIGURACIÓN ────────────────────────────────────────────────────────────
+// Después de deployar tu Cloudflare Worker, pegá su URL acá:
+const PROXY_URL = "REEMPLAZAR_CON_TU_WORKER_URL";
+
+// Google Forms para registrar consultas (ya configurado)
+const FORM_CONFIG = {
+  formResponseUrl: "https://docs.google.com/forms/d/e/1FAIpQLScat2rNqgduCfEqEdGnQUFWjO4ChIniGU9Qxdz4cVs5r-h0Og/formResponse",
+  entryNombre: "entry.1042729633",
+  entryApellido: "entry.1101671698",
+  entryEmail: "entry.1096235688",
+  entryQuery: "entry.319114036",
+};
+// ─────────────────────────────────────────────────────────────────────────────
+
+const { useState, useRef } = React;
+
+const EJES = [
+  { n: "Comunicación estratégica",
+    q: "¿Cómo puede la comunicación contribuir a los objetivos y relaciones de una organización?",
+    a: [
+      { nombre: "Andrés Aljure", aporta: "Ordena el diagnóstico y la elaboración de planes estratégicos de comunicación.", conviene: "El TFG debe pasar de un problema comunicacional a objetivos, acciones, cronograma e indicadores." },
+      { nombre: "Sandra Massoni", aporta: "Concibe la comunicación como proceso relacional, situado y multidimensional.", conviene: "Hay actores diversos, tensiones y una transformación que no se reduce a emitir mensajes." },
+      { nombre: "Joan Costa", aporta: "Integra identidad, gestión, imagen y comunicación en una visión sistémica.", conviene: "Se necesita evaluar la coherencia entre lo que la organización es, hace y comunica." },
+      { nombre: "Washington Uranga", aporta: "Entiende la comunicación como práctica social constitutiva y productora de sentidos.", conviene: "El problema exige analizar discursos, relaciones y acciones en una situación social concreta." },
+      { nombre: "Luis Bassat", aporta: "Aborda la publicidad como persuasión donde estrategia, creatividad, mensaje y medios deben ser coherentes.", conviene: "El TFG fundamenta una campaña, una idea creativa o decisiones de mensaje y medios." },
+    ] },
+  { n: "Identidad e imagen",
+    q: "¿Qué es la organización o marca, cómo se expresa y cómo es percibida?",
+    a: [
+      { nombre: "Paul Capriotti", aporta: "Diferencia identidad, comunicación e imagen, e incorpora el papel activo de los públicos.", conviene: "Se compara la identidad definida con las percepciones construidas por distintos grupos." },
+      { nombre: "Joan Costa", aporta: "Entiende la identidad como sistema visual, verbal y conductual.", conviene: "Se analiza la coherencia entre símbolos, discursos, comportamientos y puntos de contacto." },
+      { nombre: "David Aaker", aporta: "Desarrolla identidad, asociaciones, personalidad y propuesta de valor de marca.", conviene: "El objeto principal es una marca comercial, un producto o un servicio." },
+      { nombre: "Sebastián Moreno Barreneche", aporta: "Analiza identidad y autorrepresentación como construcciones semióticas y efectos de autenticidad.", conviene: "Se estudian marcas personales, influencers o discursos que buscan parecer auténticos." },
+    ] },
+  { n: "Posicionamiento",
+    q: "¿Qué lugar ocupa o pretende ocupar una propuesta frente a sus públicos y competidores?",
+    a: [
+      { nombre: "Al Ries y Jack Trout", aporta: "Definen el posicionamiento como un lugar diferencial en la mente del público.", conviene: "El problema central es competir, diferenciarse, reposicionarse o crear una categoría." },
+      { nombre: "Philip Kotler y Kevin Keller", aporta: "Vinculan segmentación, público objetivo, diferenciación y propuesta de valor.", conviene: "Se necesita integrar el posicionamiento con una estrategia de marketing." },
+      { nombre: "David Aaker", aporta: "Relaciona posicionamiento con identidad, asociaciones y promesa de marca.", conviene: "Se busca decidir qué atributos de identidad deben volverse una posición comunicable." },
+      { nombre: "Philip Kotler y Gary Armstrong", aporta: "Relacionan segmentación, diferenciación y propuesta de valor dentro de la estrategia de marketing.", conviene: "Se pasa del conocimiento del mercado a una posición clara, relevante y diferenciada." },
+      { nombre: "Seth Godin", aporta: "Propone propuestas notables y diferenciadas, capaces de evitar la indiferencia.", conviene: "El proyecto busca una diferencia significativa o cuestionar una categoría saturada." },
+    ] },
+  { n: "Públicos y stakeholders",
+    q: "¿Con qué grupos se relaciona la organización y cuáles son prioritarios?",
+    a: [
+      { nombre: "Maria Ferrari y Fábio França", aporta: "Clasifican públicos según el vínculo y la dependencia con la organización.", conviene: "Se necesita mapear y priorizar públicos para una estrategia de comunicación." },
+      { nombre: "Paul Capriotti", aporta: "Explica cómo los públicos se constituyen a partir de su relación con la organización.", conviene: "Se estudian percepciones, expectativas e imagen en distintos grupos." },
+      { nombre: "R. Edward Freeman", aporta: "Analiza stakeholders según intereses, influencia y afectación mutua.", conviene: "El problema exige reconocer poder, conflictos, responsabilidades o capacidad de decisión." },
+    ] },
+  { n: "Comunicación digital y engagement",
+    q: "¿Cómo se construyen vínculos, contenidos e interacciones en plataformas digitales?",
+    a: [
+      { nombre: "Roderick Brodie y colaboradores", aporta: "Conceptualizan el engagement como proceso cognitivo, emocional y conductual.", conviene: "Se estudia la calidad del vínculo y no solo alcance o cantidad de seguidores." },
+      { nombre: "Carreras, Iglesias y Sureda", aporta: "Abordan la gestión estratégica de plataformas, canales y contenidos digitales.", conviene: "El TFG analiza presencia digital, planificación de contenidos e interacción." },
+      { nombre: "Philip Kotler y Kevin Keller", aporta: "Relacionan canales digitales, experiencia, recorrido y fidelización.", conviene: "Se conecta la comunicación digital con objetivos de marketing o conversión." },
+      { nombre: "Raquel Oberlander y Roi Shahaf", aporta: "Organizan el marketing digital como recorrido de atracción, vínculo y conversión con contenidos relevantes.", conviene: "Se planifican contenidos y acciones digitales para objetivos y etapas distintas." },
+      { nombre: "Marshall McLuhan", aporta: "Plantea que el medio condiciona la forma del mensaje, la percepción y la experiencia.", conviene: "El TFG compara plataformas o justifica cómo un medio cambia la forma de comunicar." },
+    ] },
+  { n: "Comportamiento del consumidor, significados y persuasión",
+    q: "¿Qué factores explican percepciones, motivaciones y decisiones de consumo?",
+    a: [
+      { nombre: "Schiffman, Kanuk y Wisenblit", aporta: "Desarrollan motivación, percepción, actitudes, aprendizaje y decisión.", conviene: "Se investiga por qué las personas eligen, valoran, rechazan o recomiendan una propuesta." },
+      { nombre: "Philip Kotler y Kevin Keller", aporta: "Ordenan factores culturales, sociales, personales y psicológicos.", conviene: "Se relaciona el comportamiento con segmentación, mercado y estrategia." },
+      { nombre: "Pierre Bourdieu", aporta: "Vincula prácticas de consumo con habitus, capital cultural y distinción.", conviene: "El consumo tiene dimensión simbólica, aspiracional o de diferenciación social." },
+      { nombre: "Mary Douglas y Baron Isherwood", aporta: "Comprenden los bienes como sistemas culturales de comunicación, pertenencia y ritual.", conviene: "El consumo debe leerse por sus significados sociales, no solo como decisión económica." },
+      { nombre: "Roland Barthes", aporta: "Permite leer productos e imágenes como sistemas de signos que producen mitos.", conviene: "El objeto tiene fuerte dimensión simbólica y se interpreta qué valores representa." },
+      { nombre: "Richard Petty y John Cacioppo", aporta: "El ELM distingue rutas central y periférica en el procesamiento persuasivo.", conviene: "Se investiga cómo argumentos, emociones o credibilidad influyen en la recepción." },
+      { nombre: "Milton Rosenberg y Carl Hovland", aporta: "El modelo ABC organiza las actitudes en lo cognitivo, afectivo y conductual.", conviene: "Se diferencia lo que las personas piensan, sienten e intentan hacer frente a una marca." },
+    ] },
+  { n: "Cultura organizacional y comunicación interna",
+    q: "¿Cómo se construyen significados, vínculos y prácticas dentro de una organización?",
+    a: [
+      { nombre: "Gary Kreps", aporta: "Analiza flujos de información, coordinación e integración organizacional.", conviene: "El problema incluye circulación de información o relaciones entre áreas e integrantes." },
+      { nombre: "Etkin y Schvarstein", aporta: "Estudian identidad, estructura, tensiones y complejidad organizacional.", conviene: "Se busca cómo la historia y las prácticas internas configuran la organización." },
+      { nombre: "Brandolini y colaboradores", aporta: "Ofrecen herramientas de diagnóstico y planificación de comunicación interna.", conviene: "El TFG debe proponer acciones, canales o un plan interno concreto." },
+    ] },
+  { n: "Comunidad y participación",
+    q: "¿Cómo se construyen pertenencia, vínculos y prácticas compartidas?",
+    a: [
+      { nombre: "Albert Muniz y Thomas O'Guinn", aporta: "Definen comunidades de marca por conciencia compartida, rituales y responsabilidad.", conviene: "Se estudian grupos con pertenencia afectiva alrededor de una marca." },
+      { nombre: "Pierre Bourdieu", aporta: "Permite comprender redes, confianza, reconocimiento y capital social.", conviene: "El problema involucra colaboración, reciprocidad o acceso a recursos colectivos." },
+      { nombre: "Sandra Massoni", aporta: "Piensa la comunicación como encuentro, articulación y construcción colectiva.", conviene: "Se trabaja con organizaciones sociales o procesos participativos." },
+    ] },
+  { n: "Propósito y comunicación para el cambio",
+    q: "¿Cómo se vincula la comunicación con una causa, una orientación institucional o una transformación?",
+    a: [
+      { nombre: "Simon Sinek", aporta: "Propone formular el porqué que orienta a una organización o marca.", conviene: "Se necesita identificar o expresar el sentido central que organiza decisiones y relatos." },
+      { nombre: "Sandra Massoni", aporta: "Relaciona estrategia con transformación situada y diversidad de actores.", conviene: "El proyecto busca modificar relaciones, prácticas o formas de participación." },
+      { nombre: "Philip Kotler y Kevin Keller", aporta: "Integran propósito, valor, marketing social y relaciones con públicos.", conviene: "Se analiza cómo una causa se articula con la propuesta de valor y la marca." },
+    ] },
+  { n: "Género y representaciones sociales",
+    q: "¿Cómo se construyen, reproducen o cuestionan roles, estereotipos y relaciones de poder?",
+    a: [
+      { nombre: "Marta Lamas", aporta: "Explica el género como construcción social y cultural de roles y expectativas.", conviene: "Se necesita diferenciar sexo, género y asignaciones socioculturales." },
+      { nombre: "Pierre Bourdieu", aporta: "Analiza dominación simbólica y naturalización de desigualdades.", conviene: "Se estudian jerarquías y representaciones que parecen normales o inevitables." },
+      { nombre: "Raewyn Connell y James Messerschmidt", aporta: "Desarrollan masculinidad hegemónica y pluralidad de masculinidades.", conviene: "El TFG analiza representaciones masculinas, poder, paternidades o cambios de modelo." },
+      { nombre: "Diana Maffía", aporta: "Aporta una perspectiva feminista y epistemológica para revisar categorías naturalizadas.", conviene: "El trabajo analiza estereotipos o decisiones atravesadas por relaciones de género." },
+      { nombre: "Nancy Fraser", aporta: "Articula redistribución, reconocimiento y representación de la injusticia.", conviene: "El problema combina desigualdad material, falta de visibilidad o exclusión." },
+    ] },
+  { n: "Metodología y diseño de investigación",
+    q: "¿Cómo se articulan problema, objetivos, enfoque, técnicas e instrumentos?",
+    a: [
+      { nombre: "Hernández Sampieri, Fernández Collado y Baptista", aporta: "Ordenan enfoques, alcances, diseños, técnicas e instrumentos.", conviene: "Se justifica el diseño metodológico, la selección de corpus y el análisis." },
+      { nombre: "Karina Batthyány y Mariana Cabrera", aporta: "Herramientas de investigación social para construir problemas y operacionalizar conceptos.", conviene: "El TFG traduce conceptos teóricos en dimensiones observables en un estudio situado." },
+      { nombre: "Irazábal, Santangelo, Martorelli y Ponce", aporta: "Abordan decisiones metodológicas propias de la investigación en comunicación.", conviene: "Se diseñan entrevistas, encuestas o análisis de materiales comunicacionales." },
+    ] },
+  { n: "Publicidad integrada y nuevos formatos",
+    q: "¿Cómo se incorporan marcas dentro de contenidos, relatos y experiencias sin funcionar como anuncios separados?",
+    a: [
+      { nombre: "Cristina del Pino y Fernando Olivares", aporta: "Estudian brand placement y advertainment como integración entre marca, ficción y entretenimiento.", conviene: "El objeto combina contenido y comunicación comercial y se analiza su coherencia narrativa." },
+      { nombre: "Víctor Álvarez Rodríguez", aporta: "Sistematiza tipologías de emplazamiento según presencia, temporalidad y contexto narrativo.", conviene: "El TFG necesita categorías claras para comparar apariciones de marca en contenidos." },
+      { nombre: "José Martí", aporta: "Analiza relaciones entre marketing, videojuegos, entretenimiento e interacción.", conviene: "Se estudian videojuegos, experiencias interactivas o advergaming." },
+    ] },
+];
+
+const TH = {
+  C1:"Género y representación", C2:"Marca y (re)posicionamiento",
+  C3:"Sustentabilidad, RSE y greenwashing", C4:"Redes sociales e influencers",
+  C5:"IA y tecnología", C6:"Entretenimiento y cultura",
+  C7:"Institucional y tercer sector", C8:"Sociedad, activismo y juventud",
+  C9:"Estrategia comercial y experiencia de compra",
+};
+const D = "https://drive.google.com/drive/folders/";
+const TFGS = [
+  { t:"El corazón de una billetera: comunicación de Teletón Uruguay (2003-2019)", c:"C2", au:"Costa, Capriotti, Lazarsfeld", d:"publicidad social e imagen de marca en discapacidad", u:D+"1SHTk6IfmcNbPIwg383zgG5IvCpE4_fsX" },
+  { t:"La góndola le quedó chica: estrategias de comunicación de BAS", c:"C2", au:"Keller, Trout, Kotler, Revella", d:"posicionamiento y gestión de marca en punto de venta", u:D+"18WqcAtVnjjJZISVAqCWPhZ1jBVRsYl01" },
+  { t:"Salus, ¿rebranding con consciencia o greenwashing? (2019)", c:"C3", au:"Roberts, Ries, Kartajaya/Setiawan", d:"rebranding sustentable genuino vs. greenwashing", u:D+"1bbhjwEvRGc6zjYBikQZJS1v4T1tFY8Y3" },
+  { t:"Del tabú a la conversación: posicionamiento de Masculan en Instagram", c:"C1", au:"Keller, Kotler, Solomon", d:"ruptura de tabú, marca y comportamiento del consumidor", u:D+"16V8XsGBMfMaXK8A8Mp_38dDtSpKFu-kG" },
+  { t:"Comunicación B2B: campaña publicitaria para CEPRODIH", c:"C7", cp:true, au:"Maletzke, Bassat, Trout", d:"campaña B2B para tercer sector", u:D+"1Jal3XplgNz3fZq5qiSKej6OwYiCNAYbj" },
+  { t:"De blog personal a marca: Florencia Jinchuk y The Chemist Look", c:"C2", au:"Aaker, Armstrong, Solomon", d:"transición de blog a marca, brand equity", u:D+"1lpCnu8WzQZFC3PlU2EH62qBkT1ahZINT" },
+  { t:"Supermercado Las Palmas: creación de campaña en el interior", c:"C2", cp:true, au:"Keller, Kotler, Gobé, Jenkins", d:"reposicionamiento y branding emocional", u:D+"1nMcT-Q7zA91w2-WsFXm2lYE1KMNOrMYu" },
+  { t:"El camino recorrido: identidad de los archivólogos en Uruguay", c:"C7", au:"Capriotti, Duchein", d:"identidad profesional", u:D+"1K_94KNLqklEOt0qpgZRvbXlb99RlDfXO" },
+  { t:"Productos de comunicación e identidad: Museo Nacional de Antropología", c:"C7", cp:true, au:"Capriotti, Massoni", d:"productos de comunicación para identidad institucional", u:D+"146sJZkIRxXd-hXscsvpI8Ifk8ClkKb5c" },
+  { t:"Gestión de comunicación organizacional: Cine Universitario del Uruguay", c:"C7", au:"Capriotti, Uranga, Mintzberg, Aljure", d:"comunicación organizacional y legado cultural", u:D+"1RUoTe-BYbipACSnDL8aVAf3lg8ex-IOg" },
+  { t:"Espacio de Arte Contemporáneo: fortalecer su imagen", c:"C7", au:"Aljure, Capriotti", d:"imagen y comunicación externa institucional", u:D+"1pDy5sWVBMbb4qVdBkPts7TafPPArcvap" },
+  { t:"Cippus: desafíos de la comunicación en la gestión organizacional", c:"C7", au:"Capriotti, Aljure, Filgueira", d:"comunicación estratégica en gestión organizacional", u:D+"1Qpo947qlDxoZrklU3j2YfHKOZCwA2_7-" },
+  { t:"Discursos ambientalistas en la industria alimenticia: greenwashing en Uruguay", c:"C3", au:"Capriotti, Costa, Keller", d:"greenwashing, identidad e imagen corporativa", u:D+"1FqGVmetgJ4N1mo_OvHC_NEIAHT79-j4D" },
+  { t:"De lo espontáneo a lo planificado: comunicación estratégica en un cowork", c:"C7", au:"Aljure, Capriotti", d:"de comunicación espontánea a planificada", u:D+"1wLaVn271yBR3QPqHRPQPLqwk3Q2YDq_T" },
+  { t:"Del talento a la marca: IA en la gestión de imagen de futbolistas", c:"C5", au:"Aaker", d:"IA y marca personal de futbolistas", u:D+"1PLZSgS2QMNjCumJz83PQjDXgZPV80Rcx" },
+  { t:"La experiencia Starbucks y su interacción con la IA en Montevideo (2024)", c:"C5", au:"Bourdieu, Bauman, Bassat, Kotler", d:"marketing experiencial e IA, mirada sociológica", u:D+"1Q3bWKTVXoeT8prvpLZBD3FIMKMawmd3k" },
+  { t:"Comunicar para conectar: comunicación estratégica en el Museo de Historia Natural", c:"C7", cp:true, au:"Capriotti, Arocena", d:"identidad corporativa y desarrollo territorial", u:D+"1dfYd6g_cEtm713jx2eL1Cf12Svf7MRwu" },
+  { t:"Personas sordas en el contexto audiovisual y publicitario en Uruguay", c:"C1", au:"Vivian Burad", d:"exclusión de personas sordas, accesibilidad", u:D+"1zT-WsVxNa9JCNOY_01pC1p2wQfE8cxZd" },
+  { t:"TikTok: canal estratégico para artistas emergentes", c:"C4", au:"Robert Stake", d:"TikTok en el éxito de músicos emergentes", u:D+"1Koqe_3ArvjUwswkGGd_Zq88kFPmpyVm9" },
+  { t:"La marca persona en la sociedad del entretenimiento: caso Luis Suárez", c:"C6", au:"Kotler, Tribou", d:"marca persona y entretenimiento deportivo", u:D+"1MYsZYwZ42MnTgoCwpdNWmd_BMKMawmd3k" },
+  { t:"Creatividad artificial: IA generativa en agencias uruguayas (2023-2024)", c:"C5", au:"Boden, du Sautoy, Sadin", d:"IA generativa en procesos creativos de agencias", u:D+"10IOcbMnP6srWYdfh90kpWL7bLlxbhegT" },
+  { t:"Publicidad a bombo y platillo: música de murga en publicidad (2020-2024)", c:"C6", au:"Caro, Schmitt, Aharonián", d:"música de murga en publicidad audiovisual", u:D+"17Eb2xVRGS4CVQJqmJ_J0fR62x8kf4-Tl" },
+  { t:"Interacción con chatbots: compra de indumentaria en Indian (2023-2024)", c:"C5", au:"Jakob Nielsen", d:"chatbots y experiencia de compra", u:D+"1oF_Te2nKcWxHZq7srE1_2yDAyv0fumbA" },
+  { t:"Viralización: campaña Gracias a mi ex de Burger King", c:"C4", au:"Luis Bassat", d:"fenómeno de viralización de campaña", u:D+"1-Sgm3uUmydcGzjmdhx67m2PxFUyGwG7q" },
+  { t:"La implementación de la IA en la industria publicitaria uruguaya", c:"C5", au:"Boden, Bilinkis, Schwab, Méndiz Noguero, Corvalán, Bassat", d:"IA en la industria publicitaria: regulación y trabajo", u:D+"1JztNmqniVyIoRVSyEchG5nb1g-1qJdqE" },
+  { t:"Publicidad en pandemia: campaña Venta Exclusiva del Fiat Strada (2020)", c:"C2", au:"Armstrong, Keller, Lecinski (ZMOT)", d:"publicidad en contexto de pandemia", u:D+"16EpE_0xT69lm3gCuo-A3IJD4xieIYIPW" },
+  { t:"Influencers en Instagram: lanzamiento zapatillas Puma Palermo (2024)", c:"C4", au:"Cova, Hudders", d:"publicidad de influencers en lanzamiento", u:D+"1fahvKqyaXvdXlMp3Z6co6vnUFTFWL28O" },
+  { t:"Los celebrities: campañas de Claro y Movistar (2016)", c:"C9", au:"Costa, Capriotti, Andacht", d:"discurso con celebrities en telefonía", u:D+"1hi3KwVvWF2HswgT6cPNRHNOxMC5kw0V6" },
+  { t:"Comunicación política: campaña electoral del Partido Nacional (2019)", c:"C8", au:"Wolton, Panebianco", d:"análisis de comunicación política electoral", u:D+"1jjSRi6YCqxo_sywZqfdLVi2YISPNEHCT" },
+  { t:"La influencia de la publicidad digital en el consumo por redes (2020-2022)", c:"C4", au:"Capriotti", d:"publicidad digital y consumo en redes", u:D+"1ZECg8snv0oWnum1VIEWg4CYKRxPkv7J8" },
+  { t:"Discurso publicitario y 'vida saludable': MSP, McDonald's, Health Save", c:"C3", au:"Billorou, Codeluppi, Bourdieu, Maslow", d:"construcción de 'vida saludable' en publicidad", u:D+"1-6UONPUE7uIyJwp7creT_kFr4ptUXHlE" },
+  { t:"La sostenibilidad en el discurso publicitario: Sprite y el greenwashing", c:"C3", au:"Aaker, Costa, Bassat", d:"sostenibilidad y greenwashing en campaña", u:D+"1K0QdvNxhVCQEC0HX6g3OxVFgx6hQVzrz" },
+  { t:"La comunicación de las cervezas artesanales: caso Cabesas Bier", c:"C2", au:"Oberlander/Shahaf, Farquhar, Ogilvy, Aaker, Solomon", d:"comunicación de marca en cerveza artesanal", u:D+"1yg88WjuwEiLVSu7941KB20UhZqQZ5o1o" },
+  { t:"Posicionamiento de marca en aguas minerales: caso Fuente Natal", c:"C2", cp:true, au:"Kotler, Malhotra, Keller, Capriotti", d:"bases estratégicas de posicionamiento de marca", u:D+"1YWgpggMZJjhYZGCn4bCLeATx3SG5z_HZ" },
+  { t:"Multiculturalismo y su influencia en la publicidad", c:"C8", au:"Roland Barthes", d:"multiculturalismo y representación en publicidad", u:D+"1FLGZbSFtTgC1Rz6BcCT14z09pQFuF-V0" },
+  { t:"Comunicación en tiempos de crisis: caso Markenetics (COVID-19)", c:"C2", au:"Kotler, Armstrong, Keller, Thaler", d:"estrategias de comunicación en crisis", u:D+"1N8PkW30wHb_UILKpY3qFBSQQeFPjItFV" },
+  { t:"La RSE y sus lazos con la infancia y primera infancia en Uruguay", c:"C3", au:"Sautu, Samaja, Narodowski, Postman", d:"RSE e infancia desde la publicidad", u:D+"1MJKoCTM-Lg-PUNrU3-u5-xub_FHsyh7l" },
+  { t:"La comunicación de Bizarrap y el arte de averiguar", c:"C6", au:"Armstrong, Kotler", d:"comunicación de una marca-artista", u:D+"1KyV7sL2Qrf0eQ-5t3Q8XXr3SfgGxhYL1" },
+  { t:"Publicidad emocional de Rexona (Nacional y Peñarol, 2019-2024)", c:"C2", au:"Fernando Andacht", d:"publicidad emocional y hinchada", u:D+"1XMseIKdcVxnxrKtLtOEEgL6X4fwld7cB" },
+  { t:"Entre copas y anuncios: bebidas alcohólicas en Uruguay (2013-2024)", c:"C9", au:"Horkheimer, Bourdieu, Martín-Barbero", d:"regulación de publicidad de alcohol", u:D+"16Qowxv2FS6PB0jqpNAccV4DJvwpdH65r" },
+  { t:"Reposicionamiento de A Pura Gambeta (streaming, Montevideo)", c:"C6", cp:true, au:"Keller, Bassat", d:"reposicionamiento de programa de streaming", u:D+"1a8hi3H1X1rL83iy838sb168qAnQYTb3q" },
+  { t:"La payada y su relación con el contexto", c:"C6", au:"Moreno Chá, Lozares", d:"payada y cultura popular uruguaya", u:D+"1BCRjWSOIBgva6tdcxg8jOMDzTyRvJ0pH" },
+  { t:"Neuromarketing en Disco Fresh Market", c:"C9", au:"Braidot, Bachrach, Klaric, Dooley", d:"estrategias de neuromarketing en retail", u:D+"1AFKvv4kHMabIBAIJ0xN3B-_GwpbUuKJN" },
+  { t:"Garnier, una marca certificada cruelty free", c:"C3", au:"Jack Trout", d:"certificación cruelty free y percepción", u:D+"1Fd6o38Eaxgr4qw1zp73hsd7XW5XsygiE" },
+  { t:"El humor como herramienta estratégica: Paso de los Toros (2011-2022)", c:"C2", au:"Luis Bassat", d:"humor como recurso creativo en campañas", u:D+"13s2FR_-rj0sytt0pimlICzRI6VffgB2u" },
+  { t:"El lado B: campaña 'Ni silencio ni tabú' sobre salud mental (2022-2023)", c:"C8", au:"Gumucio Dagron, Fromm", d:"publicidad social sobre salud mental", u:D+"1qOLgNyQSM07kky36VYzU2VkF2R3WVNx3" },
+  { t:"Barreras para el avance de las mujeres en puestos creativos de agencias", c:"C1", au:"García Beaudoux, Scott, Fraser", d:"género y permanencia en puestos creativos", u:D+"1Kcziu2meQF--2sp5DXeQi7QmqreEyKBZ" },
+  { t:"Próximo destino: Aeropuertos Uruguay — publicidad emocional", c:"C2", au:"Roberts, Keller", d:"publicidad emocional de marca", u:D+"1KDD4uX-UpH9QhCTfhsVlO9iRTt7ef_nv" },
+  { t:"El marketing viaja al futuro: advergaming infantil — Vascolet (2010)", c:"C5", au:"Schor, Méndiz", d:"advergaming infantil en videojuego", u:D+"1LQcFZpAMdL3v0b5f2uEjBeUyMCnIpSLU" },
+  { t:"Rockstar Energy: marca global que ingresa al mercado rioplatense", c:"C2", au:"Bassat, Barthes, Keller, Anholt", d:"estrategia de marca global en mercado local", u:D+"18w_tESi0snN9IGqCAlWu10UuO2l0GLKR" },
+  { t:"Cuando la publicidad toca la puerta de la empatía: Techo Uruguay (2021-2022)", c:"C7", au:"Carlos Scolari", d:"apelación a la empatía en publicidad de ONG", u:D+"1nCGNjtTGazmjaYNSAyNasVUO3QN2TnZq" },
+  { t:"Intervención profesional para el Colectivo Gestar Derechos: comunicación visual", c:"C7", cp:true, au:"Martín-Barbero, Kaplún, Nutbeam", d:"comunicación visual para colectivo de derechos", u:D+"1ud8JtLE-jnxkGGiujIVjB-u8foIf2-Xe" },
+  { t:"Salud mental y ámbito laboral: la industria publicitaria uruguaya", c:"C8", au:"Byung-Chul Han, Solomon", d:"salud mental en el trabajo publicitario", u:D+"1J17hqhD1lgMv-H29OpKGTPUXGpTZrjoV" },
+  { t:"ASMR: product placement, influencers y percepción de la audiencia", c:"C4", au:"Kotler/Armstrong, Petty/Cacioppo, Del Pino/Olivares", d:"product placement en videos ASMR (ELM, ABC)", u:D+"1goUULr1q8_ayU5LfAXJsid6LQrfOkB3Q" },
+  { t:"Concejo Vecinal 5: comunicación y participación ciudadana", c:"C7", cp:true, au:"Capriotti, Soler, Bettoni/Cruz, Cardarello/Ferla", d:"descentralización y participación ciudadana", u:D+"1n1YfenYbOSdC-CHfVzVFY2L5YkyuwTdH" },
+  { t:"Manos Veneguayas: comunicación institucional del tercer sector", c:"C7", cp:true, au:"Uriarte, Dorronsoro, Bettoni/Cruz, Poyato, Carreras/Sureda", d:"planificación estratégica para ONG de migrantes", u:D+"1QUKmZ8WXtkv3OtDA1ja6FlRzw9v4JPL3" },
+  { t:"Redes sociales, identidad e ideales de belleza: Dove 'Sin Distorsión Digital'", c:"C8", au:"Oberlander/Shahaf, Turkle, Eco, Urresti", d:"identidad y belleza en adolescentes", u:D+"1JlZzY_VKgeFE-A7pSsTgGY1G5yvNmUYf" },
+  { t:"AUF: de símbolo deportivo a marca registrada (2010-2024)", c:"C2", au:"Kotler/Keller, Ries/Trout, Aaker, Barthes", d:"posicionamiento e identidad de marca deportiva", u:D+"12ga0lmzhXeyKxOfBl-NyAh_VQRFMBxM" },
+  { t:"Olga: de comunidad digital a experiencia presencial (Antel Arena)", c:"C4", au:"Martín-Barbero, Neira, Radakovich/Wortman, Kotler/Keller", d:"convergencia, transmedia y tribu digital", u:D+"1OxonyHIm5I32sYoH9up54nu88oZmC-qG" },
+  { t:"Museo Figari: comunicación relacional con centros educativos", c:"C7", au:"Colomer, Notario, Mazzola, Balán, Roura Galtés, Santacana", d:"plan de comunicación relacional con escuelas", u:D+"1WLoFrFGjJ9GoYrBpXlCeDj6I" },
+  { t:"Navidad con Jesús: religión, publicidad y espacio público (2023)", c:"C8", au:"Blancarte, Reguillo, Carrión, Habermas", d:"religión y publicidad en espacio público", u:D+"14VhjXNLOy0c7aewDl2NM3Jn-goUw3toE" },
+  { t:"Influencers Rotunda: percepción de marca y decisión de compra (2024-2025)", c:"C4", au:"Oberlander, Kotler, Kartajaya/Setiawan, Barthes", d:"micro/macro/celebrity influencers en moda", u:D+"1HL4pn5HXHqOjNwoABS_KA3tlcsyqvkdf" },
+  { t:"Love Beauty and Planet: ¿sustentabilidad o greenwashing?", c:"C3", au:"Carroll, Pulido, Muñoz Martín, García", d:"RSE ambiental y coherencia comunicacional", u:D+"1GBcEMNMy-vvh66X9aY4eq7TsUrm2_tJG" },
+  { t:"Swipe: formato, gestualidad y comportamiento en redes", c:"C4", au:"Flusser, Manovich, Sarlo, Postman, Guattari", d:"el formato swipe y sus implicaciones", u:D+"1C8tV79GyM9PcRxvcLQhrhcaPNEgI5Ohi" },
+  { t:"Publicidad de anticonceptivos: género e imagen (Bayer y Urufarma, 2010)", c:"C1", au:"Garrido Lora, Beauvoir, Butler, Bernárdez Rodal, Barthes", d:"representación de género y Ley de Salud Sexual", u:D+"13Hny5vSXfJGa5lJo84NHzswlBd7rFXzS" },
+  { t:"o.b.: femvertising e higiene femenina (1990-2020)", c:"C1", au:"Becker-Herby, Varela, Ros Miralles, Codeluppi, Barthes", d:"evolución del femvertising en tampones", u:D+"1Ybpb8bNczMZ-q24YbJAsW_D-3Z4PgAEd" },
+  { t:"Fortnite: product placement en videojuegos", c:"C6", au:"Kotler, Armstrong, Bassat", d:"emplazamiento de producto en videojuego", u:D+"1oc3Er91HP8wwNT1k4MXGxkxHxx1Bahv1" },
+  { t:"Turismo Daymán: reposicionamiento y campaña (creación)", c:"C2", cp:true, au:"Leiper, Lanquar, Lohmann, De la Ballina, Schiffman/Lazar Kanuk", d:"reposicionamiento de destino termal post-COVID", u:D+"1905x3lgYcRX9NS8AOCgq_imuUBZMUAvz" },
+  { t:"Carlos Gutiérrez: una marca posicionada sin publicidad", c:"C2", au:"Kotler, Ries/Trout, Debord, Bassat", d:"liderazgo de mercado sin marketing activo", u:D+"1spFHyTaz7q3Edg3YkhkiQ0qH1gGCX0a6" },
+  { t:"Milka: producto, emoción y percepción ('a un Milka de distancia')", c:"C2", au:"Batey, Solomon, Kotler, Heller, Arnheim", d:"regalo emocional y percepción de campaña", u:D+"1HL6PaMgxFR4N-BAQR78bkhVn9rcJFBQS" },
+  { t:"Salus: rebranding 2019 — ¿RSE genuina o greenwashing?", c:"C3", au:"Roberts, Orozco/Ferré, Kotler, Ries/Ries", d:"rebranding sustentable de marca de agua", u:D+"1zoTH4l9VVRwE2sJ8DDzmg4qcclE4JCvR" },
+  { t:"Creativas andan diciendo: género en departamentos creativos", c:"C1", au:"Uranga, Fraser, Gamba", d:"experiencia de mujeres en creatividad publicitaria", u:D+"1WiS6bJEWwN3zWVx7mBsb0ctmLCh38wXD" },
+  { t:"IA en la publicidad: agencias uruguayas (2023-2024)", c:"C5", au:"Boden, Schwab, Bilinkis", d:"impacto de la IA: regulación, ética y trabajo", u:D+"1xyKFa44t7bcyIl0hcbVi6WVnF1v7Q2j5" },
+  { t:"Mercado Libre: del entorno online a los medios offline (2021-2023)", c:"C9", au:"Bassat, Kotler, Armstrong, Pérez Latre", d:"plataforma digital que invierte en medios offline", u:D+"1J7J5HL_2bVN6kEB0TurbHBZLTebctqcV" },
+  { t:"Chatbots de Indian: experiencia de compra de mujeres (2023-2024)", c:"C5", au:"Reig García, Sterne, Rouhiainen, Piotrowicz/Cuthbertson", d:"percepción de chatbots en experiencia de compra", u:D+"1NNSlCexAsgv1RfTtGDlygOkemCnMgIbW" },
+  { t:"FNC: análisis multimodal de campañas de consumo responsable (2010-2019)", c:"C3", au:"Kress/van Leeuwen, García del Castillo", d:"análisis multimodal de spots de consumo responsable", u:D+"1DClweZBe-ZKk4B_pITIsczwn1iPLY-Is" },
+  { t:"Reposicionamiento del Planetario de Montevideo Germán Barbato", c:"C2", au:"Ries/Trout, Kotler, Aaker/Shansby, Costa", d:"reposicionamiento de imagen tras remodelación", u:D+"1n50qPgV5-PxhMrS0dZATK1TB9WAyF1oj" },
+  { t:"Octógonos de Conaprole: etiquetado y comportamiento del consumidor", c:"C3", au:"Kotler, Schiffman/Kanuk, Billorou", d:"impacto del rotulado frontal (octógonos)", u:D+"1YktJvHpHNzL4mizJiXANrD6-h4cD-BPa" },
+  { t:"Farmashop 'Los Farmis': omnicanalidad y comunicación integrada", c:"C9", cp:true, au:"Castells, Kotler/Armstrong, Toffler, Herrera", d:"omnicanalidad y CIM en retail", u:D+"1mNFpdXmorBVYz9S_UG7Mm3KmeKq0yGKb" },
+  { t:"Pilsen Rock: branding de festival musical (2020)", c:"C6", au:"Vargas Llosa, Hoyos Ballesteros, Bassat, Kotler", d:"branding de festival y pasaje a formato virtual", u:D+"1_OrLjPMsBnsf3axP395SG_pefC1FEJao" },
+  { t:"Museo Zorrilla: intervención profesional y plan de comunicación", c:"C7", cp:true, au:"Capriotti, Costa, Villafañe, Aljure, Quinn", d:"plan de comunicación e imagen institucional", u:D+"18_dad4PkOHr1crPoTEkEQ3nKu2lhiGFO" },
+  { t:"Qué es ser joven según la publicidad (Claro, Movistar, Antel)", c:"C8", au:"Feixa, Margulis, Bourdieu, Barragán", d:"estereotipo de juventud en telefonía", u:D+"1yiNBZ-hueVP4lUO4jjgR49A1mQd4kml_" },
+  { t:"Influencers financieros: banca y público joven (Itaú, Santander, Scotia)", c:"C4", au:"Carlón, Verón, Sampedro, Bajtín", d:"influencers en comunicación bancaria a jóvenes", u:D+"1UPNw_2wV5QOkxEQwvimZ74dQQMvBI7lh" },
+  { t:"Influencers: campaña 'Soy Santander' con Marina O'Neill", c:"C4", au:"Castells, Williams, McCorquodale, Capriotti", d:"influencer en comunicación digital de marca", u:D+"1WO7Kl05VNtiRI-fC6w2Hfu4fcF5HQ9-1" },
+  { t:"Torque y Grupo City: de club tradicional a gestión empresarial", c:"C2", au:"Villena, Etkin/Schvarstein, Keller/Kotler, Alabarces", d:"cambio de identidad e imagen de club de fútbol", u:D+"142IizLZUcWKkGTycno7HyN82jPYYij1Z" },
+  { t:"Reposicionamiento de marca: caso Sarubbi (2015-2022)", c:"C2", au:"Kotler, Bassat, Trout, Costa", d:"reposicionamiento de marca de chacinados", u:D+"1Xn-PRvWvDqAwWplko978XDDUDEvyaklG" },
+  { t:"Netflix Latinoamérica: marketing de contenidos en redes", c:"C6", au:"Del Pino, Nieto, Berger/Milkman, Tryon", d:"marketing de contenidos y engagement en redes", u:D+"1W0KH-oUhx2sqI8eIjPSRld_yKBopiIre" },
+  { t:"Rexona 2020: creación profesional de campaña digital", c:"C2", cp:true, au:"Kotler/Armstrong, Oberlander/Shahaf, Trout, Barthes", d:"desarrollo de campaña desde el estratega/creativo", u:D+"1eoxhKQbJ2zHzFmaOs9tH2jqN7t_6jKaU" },
+  { t:"Representación de los cuerpos de las mujeres en la publicidad de moda (2020-2021)", c:"C1", au:"Traversa, Maffía, González Laurino, Zetune, Sierra Caballero", d:"representación de cuerpos femeninos en moda", u:D+"1ejZPGvJJZn_vk2bAboHVJRoePRqovT2U" },
+  { t:"La Fuerza: branding, roles y estereotipos de género en cerveza", c:"C1", au:"Barthes, Bourdieu, Cowan, Lamas", d:"género en comunicación de cervecería artesanal", u:D+"15NSX4IJPyhmliZnKEbiNZqieI6w76DR2" },
+  { t:"Vinos del Uruguay 'Como Nosotros': music branding", c:"C2", au:"Costa, Schmitt, Bassat, Kotler, Jennifer Aaker", d:"artistas musicales como recurso de marca", u:D+"1pJGEdvH_NispTnrriQfRqovT2U" },
+  { t:"Nacional (CNDEF): reestructuración del área de comunicación y marca", c:"C2", au:"Nuño, Costa, Capriotti, Lipovetsky", d:"construcción y consolidación de imagen de marca", u:D+"1VpSQZ2mvg0MbWma2TJ2cU5HM7G41Z-ZM" },
+  { t:"Centennials y activismo de marca (Generación Z)", c:"C8", au:"Witt/Baird, Kotler/Armstrong, Capriotti, Klein, Ries/Trout", d:"Gen Z y activismo de marca", u:D+"1m2VMyzu7oodYjofTX5GF_SzEQWG6l0Qw" },
+  { t:"Devoto: campaña 'Día del Niño' y marketing dirigido a niños", c:"C2", au:"Ferrell/Hartline, Costa, Moschini, Capriotti, Castells", d:"marca y marketing digital para público infantil", u:D+"16oKwtcBgLxd2O1hmHwVIrlm3t6JqpthX" },
+  { t:"Plus size: estereotipos de talla en la publicidad (Srta. Peel)", c:"C1", au:"Baudrillard, Simmel, Deleuze, Lipovetsky, Dubet, Dubar", d:"estereotipos de tallas plus size en moda", u:D+"17c1NFPHj2DbgHasOXIVBZyPUYf7qV2uP" },
+  { t:"Love Beauty and Planet: compromiso ambiental y percepción (Unilever)", c:"C3", au:"Kotler, Burke, Capriotti, Roberts, Carson", d:"coherencia entre discurso sustentable y percepción", u:D+"1tt1DfxVwXt6agZMaUxFNZbQEodWZN" },
+  { t:"Tienda Inglesa y Masterchef: posicionamiento e identidad de marca", c:"C2", au:"Al Ries, Costa, Capriotti, Bassat, Lipovetsky", d:"marca vinculada a programa de entretenimiento", u:D+"1ThOmjR3IS5zCxIAd96Y1mvDa6aOCOymC" },
+  { t:"Ciberlunes: transformación digital del retail uruguayo", c:"C9", au:"Toffler, Tapscott, Salvatella, Katz, Dodel", d:"evento de compras online y digitalización del retail", u:D+"1DCOvglXoZe_sz_2Ck633QoaajCrUNL0f" },
+  { t:"Del Sol 99.5: reposicionamiento de radio tras cambio de gestión", c:"C2", au:"Capriotti, Herrera, Alloza, Costa, Trout, Armstrong", d:"reposicionamiento de emisora de radio", u:D+"1jF-AcpSzpNyy3xESVWEWiy1pvZtGywmA" },
+];
+
+function buildPrompt(mode, data) {
+  const ejesTxt = EJES.map((e) =>
+    `### ${e.n}\nPregunta: ${e.q}\n` +
+    e.a.map((au) => `- ${au.nombre} | aporta: ${au.aporta} | conviene: ${au.conviene}`).join("\n")
+  ).join("\n\n");
+
+  const tfgTxt = TFGS.map((t, i) =>
+    `[${i}] "${t.t}" | tema: ${TH[t.c]} | autores: ${t.au} | ${t.d}${t.cp ? " | creación profesional" : ""}`
+  ).join("\n");
+
+  let entrada, extra;
+  if (mode === "matriz") {
+    const filas = data.map((r, i) =>
+      `Objetivo específico ${i + 1}: ${r.obj}` +
+      (r.tema ? ` | tema que toca: ${r.tema}` : "") +
+      (r.metodo ? ` | metodología que imagina usar: ${r.metodo}` : "")
+    ).join("\n");
+    entrada = `El estudiante cargó una matriz con varios objetivos de su TFG:\n${filas}`;
+    extra = `- Además de lo anterior, COMPLETÁ UNA MATRIZ DE DECISIÓN: una fila por objetivo, con concepto central, autor/es del corpus, qué permite analizar y una técnica o evidencia sugerida. Frases cortas en cada celda.\n- En este modo mantené TODO breve: hasta 3 autores y hasta 3 TFG, textos concisos.`;
+  } else {
+    entrada = `PROBLEMA / TEMA DEL ESTUDIANTE:\n"""${data}"""`;
+    extra = `- En este modo "matriz" va como arreglo vacío.`;
+  }
+
+  return `Sos un asistente de orientación para estudiantes de Trabajo Final de Grado (TFG) de Publicidad en FIC-Udelar, línea Creación Profesional. Tu criterio pedagógico es de Bonomi & López Baliñas: "los autores no se eligen por fama, sino por lo que permiten analizar dentro de un problema concreto", siguiendo la secuencia PROBLEMA → DIMENSIÓN → CONCEPTO → AUTOR → EVIDENCIA.
+
+REGLAS ESTRICTAS:
+- Recomendá SOLO autores del CORPUS DE AUTORES y SOLO trabajos del CORPUS DE TFG que están más abajo. Nunca inventes autores, títulos, datos bibliográficos ni enlaces.
+- Elegí 2 o 3 autores como máximo, por lo que permiten analizar, no por fama. Para cada uno explicá qué aporta al problema concreto y aplicá la fórmula: "Para trabajar el concepto de ___, se adopta la perspectiva de ___, porque permite analizar específicamente ___".
+- Cuando tenga sentido, mostrá UNA tensión o diálogo entre dos de los autores elegidos.
+- Recomendá 2 a 4 TFG de referencia del corpus, los más cercanos al problema, indicando por qué mirarlos. Devolvé el índice numérico [i] de cada TFG del corpus, no reescribas el enlace.
+- Si el problema está muy poco definido, decilo con franqueza en "aviso" y pedí una precisión.
+- Español rioplatense, tono directo y preciso.
+${extra}
+
+CORPUS DE AUTORES POR EJE:
+${ejesTxt}
+
+CORPUS DE TFG (referenciar por índice):
+${tfgTxt}
+
+${entrada}
+
+Respondé ÚNICAMENTE con un objeto JSON válido, sin texto antes ni después, sin markdown, con esta forma exacta:
+{
+  "lectura": {"dimension": "string", "conceptos": ["string"], "nota": "string breve de cómo entendiste el problema"},
+  "matriz": [{"objetivo": "string", "dimension": "string", "concepto": "string", "autores": "string (del corpus)", "quePermite": "string", "tecnica": "string"}],
+  "autores": [{"nombre": "string (tal cual el corpus)", "aporta": "string", "conviene": "string", "formula": "la fórmula completa aplicada a este caso"}],
+  "tension": "string o vacío",
+  "tfgs": [{"i": number, "porque": "string"}],
+  "aviso": "string o vacío"
+}`;
+}
+
+async function consultar(promptText) {
+  if (!PROXY_URL || PROXY_URL === "https://orientador.gonmlb.workers.dev/") {
+    throw new Error("PROXY_URL no configurada. Editá el archivo HTML y pegá la URL de tu Cloudflare Worker.");
+  }
+  const res = await fetch(PROXY_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      messages: [{ role: "user", content: promptText }],
+    }),
+  });
+  if (!res.ok) throw new Error(`Error del servidor: ${res.status}`);
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message || "Error de la API");
+  const text = data.content[0].text.replace(/```json|```/g, "").trim();
+  return JSON.parse(text);
+}
+
+async function enviarDatos(nombre, apellido, email, consulta) {
+  try {
+    const fd = new FormData();
+    fd.append(FORM_CONFIG.entryNombre, nombre);
+    fd.append(FORM_CONFIG.entryApellido, apellido);
+    fd.append(FORM_CONFIG.entryEmail, email);
+    fd.append(FORM_CONFIG.entryQuery, consulta.slice(0, 500));
+    fetch(FORM_CONFIG.formResponseUrl, { method: "POST", mode: "no-cors", body: fd });
+  } catch (_) { /* silencioso */ }
+}
+
+function OrientadorTFG() {
+  const [problema, setProblema] = useState("");
+  const [nombre, setNombre] = useState("");
+  const [apellido, setApellido] = useState("");
+  const [email, setEmail] = useState("");
+  const [estado, setEstado] = useState("idle");
+  const [res, setRes] = useState(null);
+  const [mode, setMode] = useState("simple");
+  const [rows, setRows] = useState([{ obj:"", tema:"", metodo:"" }, { obj:"", tema:"", metodo:"" }]);
+  const resultRef = useRef(null);
+
+  const setRow = (i, k, v) => setRows((rs) => rs.map((r, j) => (j === i ? { ...r, [k]: v } : r)));
+  const addRow = () => setRows((rs) => (rs.length < 4 ? [...rs, { obj:"", tema:"", metodo:"" }] : rs));
+  const delRow = (i) => setRows((rs) => (rs.length > 2 ? rs.filter((_, j) => j !== i) : rs));
+  const objsOk = rows.filter((r) => r.obj.trim().length >= 6).length >= 2;
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  const datosOk = nombre.trim().length >= 2 && apellido.trim().length >= 2 && emailOk;
+  const mailActivo = Boolean(FORM_CONFIG.formResponseUrl && FORM_CONFIG.entryEmail);
+  const puede = estado !== "cargando" && datosOk && (mode === "simple" ? problema.trim().length >= 12 : objsOk);
+
+  async function onSubmit() {
+    if (!puede) return;
+    setEstado("cargando"); setRes(null);
+    const filas = rows.filter((r) => r.obj.trim());
+    const promptText = mode === "matriz" ? buildPrompt("matriz", filas) : buildPrompt("simple", problema.trim());
+    const consultaTxt = mode === "matriz"
+      ? filas.map((r, i) => `Obj ${i + 1}: ${r.obj}${r.tema ? ` [tema: ${r.tema}]` : ""}${r.metodo ? ` [método: ${r.metodo}]` : ""}`).join(" || ")
+      : problema.trim();
+    if (email.trim()) enviarDatos(nombre.trim(), apellido.trim(), email.trim(), consultaTxt);
+    try {
+      const r = await consultar(promptText);
+      setRes(r); setEstado("ok");
+      setTimeout(() => resultRef.current?.scrollIntoView({ behavior:"smooth", block:"start" }), 60);
+    } catch (err) {
+      console.error(err);
+      setEstado("error");
+    }
+  }
+
+  return (
+    <div className="app">
+      <div className="wrap">
+        <span className="kicker">STFG II CP 2026 · FIC–Udelar · Prueba</span>
+
+        <div className="hero">
+          <h1>Los autores no se eligen por fama.<span className="soft">Se eligen por lo que permiten analizar.</span></h1>
+          <div className="rule" />
+          <p className="formula">
+            Para trabajar el concepto de <span className="blank">___</span>, se adopta la
+            perspectiva de <span className="blank">___</span>, porque permite analizar
+            específicamente <span className="blank">___</span>.
+            <br /><b>Partí del problema.</b> El asistente sugiere autores y trabajos del Corpus Parcial relevado.
+          </p>
+        </div>
+
+        <div className="ask">
+          <div className="modes">
+            <button className={mode === "simple" ? "mode on" : "mode"} onClick={() => setMode("simple")}>Describir el problema</button>
+            <button className={mode === "matriz" ? "mode on" : "mode"} onClick={() => setMode("matriz")}>Cargar objetivos · avanzado</button>
+          </div>
+
+          {mode === "simple" ? (
+            <>
+              <label htmlFor="prob">Contá el problema o tema de tu TFG</label>
+              <p className="hint">Cuanto más concreto el problema y el objetivo, mejor la orientación. Ej.: "Analizar cómo una marca de cerveza artesanal construye pertenencia en Instagram con su comunidad".</p>
+              <textarea id="prob" value={problema} onChange={(e) => setProblema(e.target.value)}
+                placeholder="Escribí acá tu problema, tu caso y qué querés analizar…" />
+            </>
+          ) : (
+            <>
+              <label>Cargá tus objetivos específicos</label>
+              <p className="hint">Poné al menos 2 objetivos específicos de tu TFG. Para cada uno, sumá qué tema toca y qué metodología te imaginás usar; si todavía no lo tenés claro, dejalo vacío.</p>
+              <div className="matrixIn">
+                {rows.map((r, i) => (
+                  <div className="mrow" key={i}>
+                    <div className="mnum">{i + 1}</div>
+                    <div className="mfields">
+                      <input value={r.obj} onChange={(e) => setRow(i, "obj", e.target.value)} placeholder="Objetivo específico (obligatorio)" />
+                      <div className="mrow2">
+                        <input value={r.tema} onChange={(e) => setRow(i, "tema", e.target.value)} placeholder="Qué tema toca" />
+                        <input value={r.metodo} onChange={(e) => setRow(i, "metodo", e.target.value)} placeholder="Metodología que imaginás usar" />
+                      </div>
+                    </div>
+                    {rows.length > 2 && <button className="mdel" onClick={() => delRow(i)} aria-label="Quitar objetivo">×</button>}
+                  </div>
+                ))}
+                {rows.length < 4 && <button className="madd" onClick={addRow}>+ Agregar objetivo</button>}
+              </div>
+            </>
+          )}
+
+          <div className="row">
+            <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Nombre" aria-label="Nombre" />
+            <input type="text" value={apellido} onChange={(e) => setApellido(e.target.value)} placeholder="Apellido" aria-label="Apellido" />
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Tu mail" aria-label="Mail"
+              className={email.trim() && !emailOk ? "bad" : ""} />
+          </div>
+          {email.trim() && !emailOk && (
+            <p className="fieldwarn">Ingresá un mail válido, con formato nombre@dominio.com.</p>
+          )}
+          <div className="row">
+            <button className="cta" onClick={onSubmit} disabled={!puede}>
+              {estado === "cargando" ? "Buscando en el corpus…" : "Ver recomendaciones"}
+            </button>
+          </div>
+          <p className="mailnote">
+            {mailActivo
+              ? "Te pedimos nombre, apellido y mail solo para saber quién hizo la consulta. No se muestran a nadie más."
+              : "Te pedimos nombre, apellido y mail para saber quién hizo la consulta."}
+          </p>
+
+          <div className="disclaimer">
+            Prueba en desarrollo. Estas son recomendaciones parciales, armadas desde un relevamiento incompleto
+            del corpus. No sustituyen el contenido de la clase, la lectura de las obras originales ni la
+            decisión tuya y de tu tutor/a. Verificá cada autor y cada dato bibliográfico en la fuente antes de citar.
+          </div>
+
+          <details className="legal">
+            <summary>Aclaraciones sobre el uso de IA y deslinde de responsabilidad</summary>
+            <p>Las respuestas las genera un modelo de lenguaje (inteligencia artificial) a partir de un relevamiento
+            parcial del corpus. Pueden contener errores, omisiones o atribuciones inexactas, y no fueron verificadas
+            una por una. La herramienta orienta, no decide: no garantiza exactitud, completitud ni pertinencia para tu
+            caso, y no reemplaza la clase, la tutoría ni la lectura de las fuentes originales. Verificá siempre autores
+            y datos bibliográficos en la fuente antes de citar. El nombre, el apellido, el mail y la consulta que dejás
+            se registran únicamente para saber quién hizo cada consulta. Esta herramienta no se cita como fuente: citá
+            siempre las obras originales leídas y, si tu cátedra lo pide, declará su uso en una nota metodológica.
+            El uso de estas sugerencias es de tu entera responsabilidad.</p>
+          </details>
+        </div>
+
+        {estado === "cargando" && (
+          <div className="loading"><span className="dot" /><span className="dot" /><span className="dot" /> Cruzando tu problema con autores y trabajos…</div>
+        )}
+
+        {estado === "error" && (
+          <div className="errbox">No pudimos generar la orientación. Probá de nuevo en unos segundos; si sigue, reformulá el problema en una o dos frases claras.</div>
+        )}
+
+        {estado === "ok" && res && (
+          <div className="results" ref={resultRef}>
+            {res.aviso ? <div className="aviso">{res.aviso}</div> : null}
+
+            {res.lectura && (
+              <>
+                <p className="secLabel">Cómo leímos tu problema</p>
+                <div className="lectura">
+                  {(res.lectura.conceptos || []).map((c, i) => <span key={i} className="tag">{c}</span>)}
+                  <div className="dim">
+                    {res.lectura.dimension ? <><b>Dimensión:</b> {res.lectura.dimension}. </> : null}
+                    {res.lectura.nota}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {Array.isArray(res.matriz) && res.matriz.length > 0 && (
+              <>
+                <p className="secLabel" style={{marginTop:34}}>Matriz para decidir</p>
+                <div className="matrixWrap">
+                  <table className="mtable">
+                    <thead>
+                      <tr><th>Objetivo</th><th>Dimensión</th><th>Concepto</th><th>Autor/es</th><th>Qué permite analizar</th><th>Técnica o evidencia</th></tr>
+                    </thead>
+                    <tbody>
+                      {res.matriz.map((m, i) => (
+                        <tr key={i}>
+                          <td>{m.objetivo}</td><td>{m.dimension}</td><td className="hl">{m.concepto}</td>
+                          <td className="hlb">{m.autores}</td><td>{m.quePermite}</td><td>{m.tecnica}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            )}
+
+            {Array.isArray(res.autores) && res.autores.length > 0 && (
+              <>
+                <p className="secLabel" style={{marginTop:34}}>Autores para trabajar esto</p>
+                {res.autores.map((a, i) => (
+                  <div className="authcard" key={i}>
+                    <h3>{a.nombre}</h3>
+                    <span className="lab">Qué aporta</span>
+                    <p>{a.aporta}</p>
+                    {a.conviene ? (<><span className="lab">Conviene cuando</span><p>{a.conviene}</p></>) : null}
+                    {a.formula ? <div className="formulabox">{a.formula}</div> : null}
+                  </div>
+                ))}
+                {res.tension ? (
+                  <div className="tension">
+                    <span className="lab" style={{fontSize:12,fontWeight:700,textTransform:"uppercase",letterSpacing:".08em"}}>No alcanza con elegir: hacelos dialogar</span>
+                    <p style={{margin:"6px 0 0",fontSize:14.5}}>{res.tension}</p>
+                  </div>
+                ) : null}
+              </>
+            )}
+
+            {Array.isArray(res.tfgs) && res.tfgs.length > 0 && (
+              <>
+                <p className="secLabel" style={{marginTop:34}}>TFG de referencia para mirar</p>
+                {res.tfgs.map((ref, idx) => {
+                  const t = TFGS[ref.i];
+                  if (!t) return null;
+                  return (
+                    <div className="tfgcard" key={idx}>
+                      <div className="body">
+                        {t.cp ? <div className="cpflag">Creación profesional</div> : null}
+                        <h4>{t.t}</h4>
+                        <p className="meta">{TH[t.c]} · {t.au}</p>
+                        {ref.porque ? <p className="porque">{ref.porque}</p> : null}
+                        <a href={t.u} target="_blank" rel="noopener noreferrer">Abrir en Drive</a>
+                      </div>
+                    </div>
+                  );
+                })}
+              </>
+            )}
+
+            <div className="disclaimer" style={{marginTop:26}}>
+              Recordá: elegí autores por lo que permiten analizar, no por su fama o frecuencia de cita.
+              Consultá siempre la fuente original antes de incorporar una referencia.
+            </div>
+          </div>
+        )}
+
+        <div className="foot">Corpus Parcial relevado · STFG II CP 2026 · Bonomi &amp; López Baliñas · Prueba, recomendaciones parciales.</div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<OrientadorTFG />);
+</script>
+</body>
+</html>
